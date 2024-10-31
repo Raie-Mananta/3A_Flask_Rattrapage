@@ -1,108 +1,49 @@
-# 3A - R5A4 - TP1 Rattrapage
+# 3A - R5A4 - TP1 Rattrapage Nancy ASTIER Comment utiliser mon beau site
 
-Pour ce TP, vous travaillez pour un hôtel qui veut implémenter une API pour gérer ses réservations.
+Ce TP étant entièrement fait en back je n'ai pas fait de front digne de ce nom désolée.
 
-## Modèle de données - Bookings_DB
-
-Le fichier `bookings_db.py` sert de base de données.
-C'est un dictionnaire contenant les réservations d'un hôtel.
-Chaque clé est de type string, ce qui veut dire qu'une chaine de caractère est attendue lorsqu'on cherche ou ajoute une nouvelle réservation.
-
-Pour chaque clé, on retrouve comme valeur la réservation associée sous forme de dictionnaire également.
-Une réservation présente les champs et types suivants:
-
-```json
-{
-    "booking_id": "string", // str
-    "user_id": "string", // str
-    "start_date": "string", // str
-    "end_date": "string", // str
-    "is_cancelled": true, // boolean
-    "is_paid": false, // boolean
-    "price": 0.00, // float
-    "room_type": "string", // str
-},
+## Installer les dépendances et lancer le site.
 
 ```
+pip install -r requirements.txt
+```
 
-## Validation des données
+Cette commande permettra d'installer toutes les dependances nécéssaires pour lancer le site en une fois.
 
-En plus de la justesse des types, les règles de validation lorsqu'on reçoit une réservation sont les suivantes:
+```
+python main.py
+```
 
-- Le champ booking_id ne fait jamais partie du payload
-- Tous les autres champs sont obligatoires lors d'une requête de création ou de modification par remplacement
-- Le champ price ne peut pas être inférieur à 0
-- Le champ room_type ne peut avoir une autre valeur que "SINGLE", "DELUXE" ou "SUITE"
-- Tout champ supplémentaire qui n'existerait pas dans le modèle d'une réservation doit faire échouer la requête.
+Celle ci permettra de demarrer le site et de charger la base de donnée associée.
 
-## Pré-requis
 
-- L'application aura besoin des dépéndances suivantes:
-  - flask
-  - flask_cors
-  - flask_expects_json
-  - python_dotenv
-- La validation des payload se fait uniquement avec @expects_json
-- La gestion des id est libre, tant que c'est une chaine de caractères unique
-- L'application doit être accessible depuis un frontend d'un autre domaine, il faut donc mettre en place les configurations CORS nécessaires
+## Naviguer dans le site
 
-## Fichier d'entrée
+Le lien http://127.0.0.1:5000 vous ammenera à la page d'acceuil du site donnant juste un petit message de bienvenue.
 
-Votre fichier d'entrée devra être nommé main.py. L'application doit se lancer sans erreur.
+http://127.0.0.1:5000/bookings affiche toutes les reservations faites.
 
-## Routes
+http://127.0.0.1:5000/bookings/numerobooking_id ammene à une reservation specifique en fonction du booking id donné.
 
-L'API est simple, composée de 6 routes:
+Et enfin http://127.0.0.1:5000/statistics/room_type donne les statistiques de l'utilisation de chaque type de chambre.
 
-- Retrouver toutes les réservations, de manière paginée
-  - La requête renvoie une liste [] de réservations, il s'agit donc d'une liste de dictionnaires
-  - Elle prend en arguments de query les variables `offset` et `limit` permettant de renvoyer un slice de la liste
-  - Si ces arguments ne sont pas mis dans la requête, vous mettrez une valeur par défaut, de 0 pour `offset` et de 10 pour `limit`
-- Retrouver une réservation, grâce à son `booking_id`
-  - La requête doit prendre en paramètre l'id de la réservation
-  - Si la réservation en question n'existe pas, renvoyer un code dédié à une ressource inexistante et un message d'erreur générique
-  - Sinon renvoyer la réservation
-- Créer une nouvelle réservation
-  - Le payload doit être validé avec @expects_json
-  - Le `booking_id` est généré par le backend
-  - La réservation est enregistrée en DB
-  - La réservation créée est renvoyée en sortie avec le code HTTP de création
-- Modifier une réservation existante par remplacement total de ses champs
-  - Le payload doit être valide
-  - Si la réservation demandée n'existe pas, on renvoie une erreur avec code dédié à une ressource inexistante
-  - Sinon, on renvoie la réservation telle qu'elle a été modifiée en base de données
-- Supprimer une réservation
-  - L'application renvoie systématiquement le code de réussite correspondant aux requêtes qui n'ont pas de réponse attachée.
-  - Demander la suppression d'une réservation qui n'existe pas ne doit pas entrainer un plantage de l'application
-- Une route statistiques, avec pour endpoint `/statistics/room_type`
-  - Cette route renvoie un dictionnaire contenant le compte de réservations par type de chambre, uniquement si la réservation n'est pas cancelled.
-    Pour ça il faudra nécessairement boucler sur les valeurs de `bookings_db`.
-    Exemple:
-  ```json
-  {
-    "SINGLE": 4,
-    "DELUXE": 10,
-    "SUITE": 3
-  }
-  ```
+## Requetes PostMan
 
-## Contours du projet
+Il y a 3 requetes postman
 
-- Une documentation est attachée au projet
-  - Un readme explique comment installer et utiliser le projet
-  - Un fichier permettant d'installer les dépendances est présent
-  - Les fichiers ne devant pas être versionnés ne doivent pas être présents dans votre rendu
-- Architecture
-  - Une séparation selon l'architecture vue en cours est effectuée (se limiter à controller et service)
-  - On considèrera pour ce TP que le travail logique sur la DB est le rôle du service
-- Qualité du code
-  - Attention aux structures de données et à leurs méthodes associées.
-  - Respectez la PEP 8 de Python
-  - Si vous codez en français, codez l'entièreté en français
-  - Le format des réponses est un json valide, {} ou []. Pas de chaine de caractères ou de nombre seuls.
-- API REST
-  - Respectez les principes vus en cours sur les caractéristiques et la forme d'une API REST
+Celle pour ajouter une reservation. Vous ferez une requete GET sur http://127.0.0.1:5000/bookings en envoyant un body de type raw et vous mettrez une donnée au format json comme celle ci.
+```json
+{
+  "user_id": "34",
+  "start_date": "2024-11-10",
+  "end_date": "2024-11-15",
+  "is_cancelled": false,
+  "is_paid": true,
+  "price": 200.00,
+  "room_type": "SUITE"
+}
+```
 
-## Lecture du Markdown
+Celle pour supprimer une reservation. Vous ferez une requete DELETE sur http://127.0.0.1:5000/bookings/idbooking
 
-- Pour lire le md, vous pouvez utiliser une extension VSCODE, un site de MD comme Dillinger ou bien héberger le projet sur Github.
+Et enfin celle pour modifier une reservation. Vous ferez une requete GET sur http://127.0.0.1:5000/bookings/idbooking en envoyant un body de type raw et vous mettrez une donnée au format json comme vu precedent.
